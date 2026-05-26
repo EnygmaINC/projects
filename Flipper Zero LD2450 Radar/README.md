@@ -11,7 +11,7 @@ Real-time 2D mmWave radar visualizer for the **Flipper Zero** using the **HLK-LD
 | Component | Notes |
 |-----------|-------|
 | Flipper Zero | Any firmware ≥ 0.80, API version 87.1 |
-| HLK-LD2450 | 24 GHz mmWave radar, up to 3 targets, ~10 Hz output, 256000 baud UART |
+| [HLK-LD2450](https://www.hlktech.net/index.php?id=1095) | 24 GHz mmWave radar, up to 3 targets, ~10 Hz output, 256000 baud UART — [datasheet / manual](https://www.hlktech.net/index.php?id=1095) |
 
 ### Wiring (Flipper GPIO header)
 
@@ -21,6 +21,11 @@ Real-time 2D mmWave radar visualizer for the **Flipper Zero** using the **HLK-LD
 | Pin 11 (GND)| GND        |
 | Pin 13 (TX) | RX         |
 | Pin 14 (RX) | TX         |
+
+> [!IMPORTANT]
+> The Flipper's 5V GPIO pin is **disabled by default**. Before connecting the sensor, enable it:
+> **Main Menu → GPIO → 5V on GPIO → Enabled**
+> Without this the sensor receives no power and the app will show "No signal".
 
 > Mount the sensor **horizontally** (landscape orientation). The X axis is lateral (left/right) and Y axis is forward depth. Rotating the sensor 90° will swap the axes.
 
@@ -96,6 +101,15 @@ Y always has MSB = 1 (always forward/positive). X can be positive (right) or neg
 | Version | Notes |
 |---------|-------|
 | v1.0 | Initial release — semicircular radar UI, 6 sectors, 3-target tracking, coordinate readout |
+
+## 3D Printed Enclosure
+
+| Part | Link |
+|------|------|
+| Sensor box for HLK-LD2450 | [MakerWorld](https://makerworld.com/en/models/2106350-sensor-box-for-hlk-ld2450#profileId-2278280) |
+| Small ball joint mount | [MakerWorld](https://makerworld.com/de/models/2104478-small-ball-joint#profileId-2276067) |
+
+The ball joint allows the sensor to be aimed and locked at any angle without tools.
 
 ## Related
 
