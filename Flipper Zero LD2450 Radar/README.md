@@ -12,6 +12,9 @@ Real-time 2D mmWave radar visualizer for the **Flipper Zero** using the **HLK-LD
 |-----------|-------|
 | Flipper Zero | Any firmware ≥ 0.80, API version 87.1 |
 | [HLK-LD2450](https://www.hlktech.net/index.php?id=1157) | 24 GHz mmWave radar, up to 3 targets, ~10 Hz output, 256000 baud UART — [Datasheet / Manual](https://drive.google.com/drive/folders/1kTt0Z3hjKKrIF3OCIDGdwQ4KotDJ8SGA) |
+| JST 1.25mm 4-pin to Dupont female pigtail | Usually already included w/ LD2450 - [AliExpress](https://www.aliexpress.us/item/3256808370751686.html?spm=a2g0o.productlist.main.8.9e408UeB8UeBq8&aem_p4p_detail=202605261617029945822959262240004108994&algo_pvid=314bf892-6390-46a5-9f62-5c9eac054fd5&algo_exp_id=314bf892-6390-46a5-9f62-5c9eac054fd5-7&pdp_ext_f=%7B%22order%22%3A%2245%22%2C%22eval%22%3A%221%22%2C%22fromPage%22%3A%22search%22%7D&pdp_npi=6%40dis%21USD%214.21%214.21%21%21%2128.44%2128.44%21%40210337c117798374224678164e903d%2112000045699242900%21sea%21US%214059689880%21X%211%210%21n_tag%3A-29919%3Bd%3A8b05804a%3Bm03_new_user%3A-29895&curPageLogUid=Fg2tk0bVXeUx&utparam-url=scene%3Asearch%7Cquery_from%3A%7Cx_object_id%3A1005008557066438%7C_p_origin_prod%3A&search_p4p_id=202605261617029945822959262240004108994_2) |
+| Dupont Cables (Male-Male) | [Amazon Link](https://www.amazon.com/Elegoo-EL-CP-004-Multicolored-Breadboard-arduino/dp/B01EV70C78/ref=sr_1_1?crid=YGXL09WVEILA&dib=eyJ2IjoiMSJ9.SszVHKRXXxbEIG2ErBYriTYR5PGk9WL9Ph5J0Uu87uGxs-7UlU_CKqzBs0eoTT91zR1i3msv7tPUTy2ZcZlf-v7Eksej5wOFjv9k1ayokFXPCPd2u7r9_YI3lO_yAxKV42zUgCvO1fO7xuk5IOcEWmpz2j7-3wPFDbQ19on8THuJ4f0oC4xoM7yxOOD60V5RV1sm_aGnC9gMg-rx0_Kjm2VvGdtttLyU7-iUV-uzskI.9dXNAZ-fsQpDlI7OExaFcK_ZxglvdyARHdffWXstR1c&dib_tag=se&keywords=dupont+cables+kit&qid=1779836995&sprefix=dupont+cables%2Caps%2C359&sr=8-1) |
+
 
 ### Wiring (Flipper GPIO header)
 
@@ -108,6 +111,7 @@ Y always has MSB = 1 (always forward/positive). X can be positive (right) or neg
 |------|------|
 | Sensor box for HLK-LD2450 | [MakerWorld](https://makerworld.com/en/models/2106350-sensor-box-for-hlk-ld2450#profileId-2278280) |
 | Small ball joint mount | [MakerWorld](https://makerworld.com/de/models/2104478-small-ball-joint#profileId-2276067) |
+| Fixed .STL for sensor box back (when mounted facing "right", the most common way) | [Link to .STL](https://github.com/EnygmaINC/projects/blob/main/Flipper%20Zero%20LD2450%20Radar/Sensor%20Box%20-%20Back%20(To%20Right)%20LD2450.stl) |
 
 The ball joint allows the sensor to be aimed and locked at any angle without tools.
 
