@@ -13,7 +13,7 @@ Real-time mmWave radar visualizer for the **M5Stack Tab5** using the **HLK-LD245
 
 | Tab5 pin | LD2450 pin |
 |----------|------------|
-| EXT 5V   | VCC        |
+| EXT 5V   | 5V         |
 | GND      | GND        |
 | G49      | TX         |
 | G50      | RX         |
