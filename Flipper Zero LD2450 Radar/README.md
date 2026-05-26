@@ -11,7 +11,7 @@ Real-time 2D mmWave radar visualizer for the **Flipper Zero** using the **HLK-LD
 | Component | Notes |
 |-----------|-------|
 | Flipper Zero | Any firmware ≥ 0.80, API version 87.1 |
-| [HLK-LD2450](https://www.hlktech.net/index.php?id=1095) | 24 GHz mmWave radar, up to 3 targets, ~10 Hz output, 256000 baud UART — [datasheet / manual](https://www.hlktech.net/index.php?id=1095) |
+| [HLK-LD2450](https://www.hlktech.net/index.php?id=1157) | 24 GHz mmWave radar, up to 3 targets, ~10 Hz output, 256000 baud UART — [Datasheet / Manual](https://drive.google.com/drive/folders/1kTt0Z3hjKKrIF3OCIDGdwQ4KotDJ8SGA) |
 
 ### Wiring (Flipper GPIO header)
 
