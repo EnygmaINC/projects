@@ -1,0 +1,39 @@
+Windows:
+Download and install python 3.11 for all users
+Download ffmpeg binary
+run "pip install pyinstaller"
+Update .spec file
+pyinstaller  --onefile --noconsole --icon=icon.ico --add-data "ffmpeg.exe;." --add-data "icon.ico;." --add-data "splash.png;." TinyTVConverter.py
+
+
+
+
+macOS
+https://opensource.com/article/19/5/python-3-default-mac#what-to-do
+https://stackoverflow.com/questions/60469202/unable-to-install-tkinter-with-pyenv-pythons-on-macos
+https://evermeet.cx/ffmpeg/
+https://pyinstaller.org/en/stable/spec-files.html#spec-file-options-for-a-macos-bundle
+https://discuss.python.org/t/installing-universal2-python-with-pyenv/11209
+
+
+
+
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> /Users/ben/.zprofile              
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+brew install pyenv
+brew install tcl-tk 
+brew install xz
+pyenv install 3.11
+pyenv global 3.11.3
+
+/Users/ben/.pyenv/versions/3.11.3/bin/python TinyTVConverter.py
+/Users/User/.pyenv/versions/3.11.3
+
+Update .spec file from old config
+/Users/ben/.pyenv/versions/3.11.3/bin/pip install pyinstaller
+/Users/ben/.pyenv/versions/3.11.3/bin/pyinstaller TinyTVConverter.spec --clean
+
+
+
+
