@@ -1,0 +1,10 @@
+# Arduino / arduino-cli build output
+build/
+
+# PlatformIO
+.pio/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
