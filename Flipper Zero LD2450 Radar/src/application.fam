@@ -1,0 +1,13 @@
+App(
+    appid="ld2450_radar",
+    name="LD2450 Radar",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="ld2450_radar_app",
+    requires=["gui"],
+    stack_size=4 * 1024,
+    fap_category="Tools",
+    fap_version=(1, 0),
+    fap_description="HLK LD2450 mmWave 2D Radar Visualizer",
+    fap_author="theNYX",
+    fap_weburl="",
+)
