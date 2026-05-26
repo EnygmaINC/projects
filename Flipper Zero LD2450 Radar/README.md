@@ -13,7 +13,7 @@ Real-time 2D mmWave radar visualizer for the **Flipper Zero** using the **HLK-LD
 
 | Flipper pin | LD2450 pin |
 |-------------|------------|
-| Pin 1 (5V)  | VCC        |
+| Pin 1 (5V)  | 5V         |
 | Pin 11 (GND)| GND        |
 | Pin 13 (TX) | RX         |
 | Pin 14 (RX) | TX         |
