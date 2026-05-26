@@ -1,3 +1,7 @@
+<p align="center">
+  <img width="500" alt="FlipperZero-LD2450App" src="https://github.com/user-attachments/assets/31d26510-aad2-40ec-878d-de48664a0ff9" />
+</p>
+
 # LD2450 Radar — Flipper Zero FAP
 
 Real-time 2D mmWave radar visualizer for the **Flipper Zero** using the **HLK-LD2450** 24 GHz presence sensor. Tracks up to three simultaneous targets and plots them as numbered dots on a semicircular radar display rendered on the Flipper's 128×64 monochrome screen.
