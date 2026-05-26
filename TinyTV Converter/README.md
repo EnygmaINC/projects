@@ -1,8 +1,12 @@
-# TinyTV Converter — Batch Convert Beta
+# TinyTV Converter - Batch Convert (Beta)
 
-*Modded by Roman "EnygmaINC" Corrales — July 30, 2025*
+*Modded by EnygmaINC — July 30, 2025*
 
-A Python application for converting video files to formats compatible with TinyTV devices (TinyTV 2, TinyTV Mini, and TinyTV DIY Kit).
+A Python-based modification of TinyCircuits' own .exe application for converting video files to formats compatible with TinyTV devices (TinyTV 2, TinyTV Mini, and TinyTV DIY Kit) - this mod allows the user to **batch convert** multiple video files at once, as opposed to doing so one-by-one in the original app.
+
+**TinyTV**: https://tinycircuits.com/products/tinytv-2
+
+***Note:*** *This was modified from code provided by TinyCircuits, but I am in **no way** associated with TinyCircuits nor own the original code. This is just a fun little modification born out of laziness and boredom, and the love of a cool quirky gadget. Use at your own risk.*
 
 ## Features
 
