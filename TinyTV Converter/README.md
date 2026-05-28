@@ -1,20 +1,29 @@
-# TinyTV Converter - Batch Convert (Beta)
+# TinyTV Converter — Batch Convert + Blur Edit
 
-*Modded by EnygmaINC — July 30, 2025*
+*Modded by EnygmaINC — v1.0.5*
 
-A Python-based modification of TinyCircuits' own .exe application for converting video files to formats compatible with TinyTV devices (TinyTV 2, TinyTV Mini, and TinyTV DIY Kit) - this mod allows the user to **batch convert** multiple video files at once, as opposed to doing so one-by-one in the original app.
+An enhanced fork of [TinyCircuits' official TinyTV Converter](https://tinycircuits.com/products/tinytv-2) adding two quality-of-life features missing from the original: **batch folder conversion** so you can queue an entire folder of videos at once instead of converting one by one, and **Blur Edit** mode which fills the letterbox bars on vertical/portrait videos with a blurred, zoomed copy of the video instead of plain black bars.
 
-**TinyTV**: https://tinycircuits.com/products/tinytv-2
+> *This was modified from code provided by TinyCircuits. I am in no way affiliated with TinyCircuits or the original project — just a fun mod born out of laziness and the love of a quirky gadget. Use at your own risk.*
 
-***Note:*** *This was modified from code provided by TinyCircuits, but I am in **no way** associated with TinyCircuits nor own the original code. This is just a fun little modification born out of laziness and boredom, and the love of a cool quirky gadget. Use at your own risk.*
+## What's New (vs. original)
+
+| Feature | Description |
+|---------|-------------|
+| **Batch Convert** | Select a folder — all supported video files inside are queued and converted using the current interface settings |
+| **Blur Edit** | Fills letterbox bars with a blurred, zoomed duplicate of the video. No more black bars on vertical/portrait clips |
+| **More formats** | Added MKV, WMV, FLV, WebM support on top of the original MP4/MOV/AVI/GIF |
+| **Keyboard shortcuts** | `Ctrl+B` for batch convert, `Ctrl+O` open, `Ctrl+Q` quit |
 
 ## Features
 
 - **Single Video Conversion**: Convert individual video files with custom settings
-- **Batch Conversion**: Convert entire folders of videos at once
+- **Batch Conversion**: Convert entire folders of videos at once using current settings
+- **Blur Edit**: Fill letterbox bars with a blurred background — ideal for vertical/portrait videos on TinyTV 2
 - **Multiple Output Formats**: AVI (recommended) and TSV formats
-- **Customizable Settings**: TV type, scaling options, audio settings
-- **Progress Tracking**: Real-time conversion progress
+- **Customizable Settings**: TV type, scaling options, audio normalization
+- **Live Preview**: Preview panel updates in real-time as you change settings, including Blur Edit
+- **Progress Tracking**: Real-time conversion progress bar
 - **Cross-Platform**: Works on Windows, macOS, and Linux
 
 ## Supported Input Formats
@@ -25,9 +34,9 @@ A Python-based modification of TinyCircuits' own .exe application for converting
 
 ## Installation
 
-1. Ensure you have Python 3.x installed
-2. Make sure FFmpeg is available (included in the package)
-3. Run the application: `python TinyTVConverter.py`
+1. Ensure **Python 3.x** is installed ([python.org](https://www.python.org/downloads/))
+2. Download **FFmpeg** and place `ffmpeg.exe` (Windows) or `ffmpeg` (macOS/Linux) in the same folder as `TinyTVConverter.py` — [ffmpeg.org/download.html](https://ffmpeg.org/download.html)
+3. Run: `python TinyTVConverter.py`
 
 ## Usage
 
@@ -76,21 +85,29 @@ A Python-based modification of TinyCircuits' own .exe application for converting
 
 2. **Configure Settings**
    - Set your preferred TV type, scaling, audio, and output format
-   - These settings will apply to all videos in the batch
+   - These settings will apply to **all** videos in the batch
 
 3. **Start Batch Conversion**
-   - Click "Batch Convert Folder" button or use `Ctrl+B`
+   - Click **"Batch Convert Folder"** or press `Ctrl+B`
    - Select the folder containing your videos
-   - Review the confirmation dialog showing:
-     - Number of videos found
-     - Current output format
-     - Current TV type settings
-   - Click "Yes" to start conversion
+   - A confirmation dialog shows the file count, output format, TV type, and whether Blur Edit is on
+   - Click **Yes** to start
 
 4. **Monitor Progress**
-   - Progress bar shows current file conversion
-   - Console output shows conversion status
-   - All converted files will be saved in the same folder as originals
+   - Progress bar tracks the current file
+   - Console output logs each conversion
+   - Converted files are saved alongside the originals in the same folder
+
+### Blur Edit
+
+Blur Edit fills the empty bars on either side of a vertical/portrait video with a blurred, zoomed copy of the same video — the same effect used on social media to make 9:16 clips fill a 16:9 frame.
+
+1. Load a vertical video (e.g. a phone recording shot in portrait)
+2. Check **"Blur Edit"** in the Scaling Options panel, or enable it via **Video Options → Blur Edit**
+3. The live preview updates immediately so you can see the effect before converting
+4. Convert as normal — the blurred background is baked into the output
+
+> Blur Edit always letterboxes the foreground regardless of which Scaling Option radio button is selected. It works with both single and batch conversion.
 
 ## Keyboard Shortcuts
 
@@ -167,15 +184,18 @@ A Python-based modification of TinyCircuits' own .exe application for converting
 ## System Requirements
 
 - Python 3.x
-- FFmpeg (included)
+- FFmpeg (download separately — not included in source)
 - Windows, macOS, or Linux
 - Sufficient disk space for converted files
 
-## Version
+## Version History
 
-TinyTV Converter - Python 1.0.4
+| Version | Changes |
+|---------|---------|
+| **1.0.5** | Added Blur Edit mode (blurred background fill for vertical videos) |
+| **1.0.4.1** | Added batch folder conversion, more input formats, keyboard shortcuts |
+| 1.0.4 | Original TinyCircuits release |
 
 ---
 
-For more information about TinyTV devices, visit the official TinyTV website. 
-https://tinytv.us
+For more information about TinyTV devices: https://tinytv.us
