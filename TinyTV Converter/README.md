@@ -1,10 +1,10 @@
 # TinyTV Converter — Batch Convert + Blur Edit
 
-*Modded by EnygmaINC — v1.0.5*
+*Modded by EnygmaINC - v1.0.5*
 
 An enhanced fork of [TinyCircuits' official TinyTV Converter](https://tinycircuits.com/products/tinytv-2) adding two quality-of-life features missing from the original: **batch folder conversion** so you can queue an entire folder of videos at once instead of converting one by one, and **Blur Edit** mode which fills the letterbox bars on vertical/portrait videos with a blurred, zoomed copy of the video instead of plain black bars.
 
-> *This was modified from code provided by TinyCircuits. I am in no way affiliated with TinyCircuits or the original project — just a fun mod born out of laziness and the love of a quirky gadget. Use at your own risk.*
+> *This was modified from code provided by TinyCircuits. I am in no way affiliated with TinyCircuits or the original project- just a fun mod born out of laziness and the love of a quirky gadget. Use at your own risk.<br><br>For TinyCircuits' official version of the TinyTV Converter - [click here](https://tinytv.us/TinyTV-Converter-App/)*
 
 ## What's New (vs. original)
 
@@ -12,8 +12,8 @@ An enhanced fork of [TinyCircuits' official TinyTV Converter](https://tinycircui
 |---------|-------------|
 | **Batch Convert** | Select a folder — all supported video files inside are queued and converted using the current interface settings |
 | **Blur Edit** | Fills letterbox bars with a blurred, zoomed duplicate of the video. No more black bars on vertical/portrait clips |
-| **More formats** | Added MKV, WMV, FLV, WebM support on top of the original MP4/MOV/AVI/GIF |
-| **Keyboard shortcuts** | `Ctrl+B` for batch convert, `Ctrl+O` open, `Ctrl+Q` quit |
+| **More Formats** | Added MKV, WMV, FLV, WebM support on top of the original MP4/MOV/AVI/GIF |
+| **Keyboard Shortcuts** | `Ctrl+B` for batch convert, `Ctrl+O` open, `Ctrl+Q` quit |
 
 ## Features
 
@@ -30,7 +30,7 @@ An enhanced fork of [TinyCircuits' official TinyTV Converter](https://tinycircui
 
 - MP4, MOV, AVI, GIF, MPG, MPEG
 - MKV, WMV, FLV, WebM
-- And other formats supported by FFmpeg
+- And other formats supported by **FFmpeg**
 
 ## Installation
 
