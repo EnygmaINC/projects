@@ -398,16 +398,16 @@ class TinyTVConverter(Frame):
               'crop=%d:%d,'
               'boxblur=luma_radius=10:luma_power=2') % (width, height, width, height)
 
-        # Foreground layer: letterbox (keep aspect ratio, pad to canvas size)
+        # Foreground layer: scale to fit canvas — NO padding.
+        # The overlay filter centers it over the blurred background so the
+        # bg shows through on the sides instead of opaque black bars.
         fg = ('scale=%d:%d:force_original_aspect_ratio=decrease,'
-              'format=yuv444p,'
-              'pad=%d:%d:(ow-iw)/2:(oh-ih)/2,'
-              'format=yuv420p') % (width, height, width, height)
+              'format=yuv420p') % (width, height)
 
         return ('[0:v]split=2[_be_bg][_be_fg];'
                 '[_be_bg]%s[_be_blurred];'
                 '[_be_fg]%s[_be_front];'
-                '[_be_blurred][_be_front]overlay=0:0,hqdn3d[%s]') % (bg, fg, output_label)
+                '[_be_blurred][_be_front]overlay=(W-w)/2:(H-h)/2,hqdn3d[%s]') % (bg, fg, output_label)
 
     def displayPreviewFrame(self):
         if(self.durationSeconds>0):
