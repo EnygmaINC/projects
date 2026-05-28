@@ -1,4 +1,4 @@
-# TinyTV Converter — Batch Convert + Blur Edit
+# TinyTV Converter - Batch Convert + Blur Edit
 
 *Modded by EnygmaINC - v1.0.5*
 
@@ -12,7 +12,7 @@ An enhanced fork of [TinyCircuits' official TinyTV Converter](https://tinycircui
 |---------|-------------|
 | **Batch Convert** | Select a folder — all supported video files inside are queued and converted using the current interface settings |
 | **Blur Edit** | Fills letterbox bars with a blurred, zoomed duplicate of the video. No more black bars on vertical/portrait clips |
-| **More Formats** | Added MKV, WMV, FLV, WebM support on top of the original MP4/MOV/AVI/GIF |
+| **More Formats** | Added `MKV, WMV, FLV, WebM` support on top of the original `MP4/MOV/AVI/GIF` |
 | **Keyboard Shortcuts** | `Ctrl+B` for batch convert, `Ctrl+O` open, `Ctrl+Q` quit |
 
 ## Features
@@ -20,7 +20,7 @@ An enhanced fork of [TinyCircuits' official TinyTV Converter](https://tinycircui
 - **Single Video Conversion**: Convert individual video files with custom settings
 - **Batch Conversion**: Convert entire folders of videos at once using current settings
 - **Blur Edit**: Fill letterbox bars with a blurred background — ideal for vertical/portrait videos on TinyTV 2
-- **Multiple Output Formats**: AVI (recommended) and TSV formats
+- **Multiple Output Formats**: `AVI` (recommended) and `TSV` formats
 - **Customizable Settings**: TV type, scaling options, audio normalization
 - **Live Preview**: Preview panel updates in real-time as you change settings, including Blur Edit
 - **Progress Tracking**: Real-time conversion progress bar
@@ -28,8 +28,8 @@ An enhanced fork of [TinyCircuits' official TinyTV Converter](https://tinycircui
 
 ## Supported Input Formats
 
-- MP4, MOV, AVI, GIF, MPG, MPEG
-- MKV, WMV, FLV, WebM
+- `MP4, MOV, AVI, GIF, MPG, MPEG`
+- `MKV, WMV, FLV, WebM`
 - And other formats supported by **FFmpeg**
 
 ## Installation
