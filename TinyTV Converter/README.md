@@ -1,4 +1,5 @@
 # TinyTV Converter - Batch Convert + Blur Edit
+<img width="400" height="400" alt="tinytv2" src="https://github.com/user-attachments/assets/861256cf-dcfb-4be1-ad56-8db2ccc56f37" />
 
 *Modded by EnygmaINC - v1.0.5*
 
