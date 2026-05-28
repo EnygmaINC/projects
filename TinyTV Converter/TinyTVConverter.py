@@ -119,6 +119,7 @@ class TinyTVConverter(Frame):
         self.videoBitDepth = IntVar()
         self.outputFormat = IntVar()
         self.normalizeAudio = IntVar()
+        self.blurEdit = IntVar()
         self.initUI()
         
     def initVideoData(self):
@@ -225,6 +226,8 @@ class TinyTVConverter(Frame):
         optionsMenu.add_radiobutton(label="Contain/Letterbox", command=self.displayVidData, var=self.videoWindowOption, value=3)
         optionsMenu.add_radiobutton(label="Cover/Zoom", command=self.displayVidData, var=self.videoWindowOption, value=2)
         optionsMenu.add_radiobutton(label="Fill/Stretch", command=self.displayVidData, var=self.videoWindowOption, value=1)
+        optionsMenu.add_separator()
+        optionsMenu.add_checkbutton(label="Blur Edit (fill background)", variable=self.blurEdit, command=self.displayVidData)
         optionsMenu = Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Audio Options", menu=optionsMenu)
         optionsMenu.add_radiobutton(label="Keep Audio Volume", var=self.normalizeAudio, value=0)
@@ -243,6 +246,7 @@ class TinyTVConverter(Frame):
         self.videoBitDepth.set(16)
         self.outputFormat.set(1)
         self.normalizeAudio.set(0)
+        self.blurEdit.set(0)
         
         self.bind_all("<Control-o>", self.onOpen)
         self.bind_all("<Control-b>", self.onBatchConvert)
@@ -304,8 +308,11 @@ class TinyTVConverter(Frame):
 
         self.radButton1 = Radiobutton(self.radioFrameVid, text="Fill/Stretch", command=self.displayVidData, var=self.videoWindowOption, value=1)
         self.radButton1.pack(fill='x')
-                
-        
+
+        self.blurEditCheckbox = Checkbutton(self.radioFrameVid, text='Blur Edit', variable=self.blurEdit, command=self.displayVidData)
+        self.blurEditCheckbox.pack(fill='x', pady=(3,0))
+
+
         self.audioFrame = Frame(self)
 
         self.audioCheckBox = Checkbutton(self.audioFrame, text='Boost Audio Volume', command=self.runVolumeDetect)
@@ -362,6 +369,7 @@ class TinyTVConverter(Frame):
         radButton3Tip = CreateToolTip(self.radButton3, 'Keep aspect ratio and add padding to fit TinyTV')
         radButton2Tip = CreateToolTip(self.radButton2, 'Keep aspect ratio and crop to fit TinyTV')
         radButton1Tip = CreateToolTip(self.radButton1, 'Stretch video to fit TinyTV')
+        blurEditTip = CreateToolTip(self.blurEditCheckbox, 'Fill empty side bars with a blurred, zoomed version of the video. Best for vertical/portrait clips on TinyTV 2. Overrides scaling mode for the foreground (always letterboxed).')
         convertFileButtonTip = CreateToolTip(self.convertFileButton, 'Start video conversion')
         batchConvertButtonTip = CreateToolTip(self.batchConvertButton, 'Convert all video files in a folder using current settings')
         #openFolderButtonTip = CreateToolTip(self.openFolderButton, 'Open folder containing converted video file')
@@ -377,6 +385,30 @@ class TinyTVConverter(Frame):
         #https://forum.videohelp.com/threads/401057-padding-top-and-bottom-odd-number-ffmpeg
         return scaleCommand
 
+    def getBlurFilterComplex(self, width, height, output_label='vout'):
+        """Returns a -filter_complex string for the Blur Edit effect.
+
+        Duplicates the stream: one copy is scaled to cover + heavily blurred for the
+        background; the other is letterboxed and overlaid on top. The result fills
+        horizontal space (e.g. TinyTV 2's 210x135 canvas) when the source is a
+        vertical/portrait video with no black bars.
+        """
+        # Background layer: zoom to fill the full canvas, then blur hard
+        bg = ('scale=%d:%d:force_original_aspect_ratio=increase,'
+              'crop=%d:%d,'
+              'boxblur=luma_radius=10:luma_power=2') % (width, height, width, height)
+
+        # Foreground layer: letterbox (keep aspect ratio, pad to canvas size)
+        fg = ('scale=%d:%d:force_original_aspect_ratio=decrease,'
+              'format=yuv444p,'
+              'pad=%d:%d:(ow-iw)/2:(oh-ih)/2,'
+              'format=yuv420p') % (width, height, width, height)
+
+        return ('[0:v]split=2[_be_bg][_be_fg];'
+                '[_be_bg]%s[_be_blurred];'
+                '[_be_fg]%s[_be_front];'
+                '[_be_blurred][_be_front]overlay=0:0,hqdn3d[%s]') % (bg, fg, output_label)
+
     def displayPreviewFrame(self):
         if(self.durationSeconds>0):
             previewTime=self.durationSeconds/2
@@ -385,15 +417,25 @@ class TinyTVConverter(Frame):
 
             previewTime = '%02d:%02d:%02d' % (h, m, s)
 
-            scaleCommand=self.getScaleCommand(self.outputWidth*2,self.outputHeight*2)
-                
-            vidcommand = [ FFMPEG_BIN,
-            '-ss', previewTime,
-            '-i', self.inputFile,
-            '-f', 'image2pipe',
-            '-vf', scaleCommand,
-            '-pix_fmt', 'rgb24',
-            '-vcodec', 'rawvideo', '-']
+            if self.blurEdit.get() == 1:
+                filterGraph = self.getBlurFilterComplex(self.outputWidth*2, self.outputHeight*2)
+                vidcommand = [ FFMPEG_BIN,
+                '-ss', previewTime,
+                '-i', self.inputFile,
+                '-f', 'image2pipe',
+                '-filter_complex', filterGraph,
+                '-map', '[vout]',
+                '-pix_fmt', 'rgb24',
+                '-vcodec', 'rawvideo', '-']
+            else:
+                scaleCommand = self.getScaleCommand(self.outputWidth*2, self.outputHeight*2)
+                vidcommand = [ FFMPEG_BIN,
+                '-ss', previewTime,
+                '-i', self.inputFile,
+                '-f', 'image2pipe',
+                '-vf', scaleCommand,
+                '-pix_fmt', 'rgb24',
+                '-vcodec', 'rawvideo', '-']
             infoPipe = '';
             if os.name=='nt' :
                 startupinfo = sp.STARTUPINFO()
@@ -625,24 +667,40 @@ class TinyTVConverter(Frame):
     def convertAVI(self):
         timer=time.time()
 
-        scaleCommand=self.getScaleCommand(self.outputWidth,self.outputHeight)
-        
         bitRate = "1500k"
         if(self.outputHeight <= 64):
             bitRate = "300k"
-        
-        vidcommand = [ FFMPEG_BIN,
-            '-i', self.inputFile,
-            '-r', '%d' % (self.outputFrameRate),
-            '-pix_fmt', 'yuv420p',
-            '-vf', scaleCommand,
-            '-b:v', bitRate,
-            '-c:v', 'mjpeg',
-            '-ac', '1',
-            '-acodec', 'pcm_u8',
-            '-af', 'volume=%.1fdB,aresample=%d,aresample=async=1000,aresample=osf=u8,asetnsamples=n=210:p=0' % (self.volumeAdjust, self.outputAudioSampleRate),
-            '-y',
-            self.outputFile]
+
+        if self.blurEdit.get() == 1:
+            filterGraph = self.getBlurFilterComplex(self.outputWidth, self.outputHeight)
+            vidcommand = [ FFMPEG_BIN,
+                '-i', self.inputFile,
+                '-r', '%d' % (self.outputFrameRate),
+                '-pix_fmt', 'yuv420p',
+                '-filter_complex', filterGraph,
+                '-map', '[vout]',
+                '-map', '0:a?',
+                '-b:v', bitRate,
+                '-c:v', 'mjpeg',
+                '-ac', '1',
+                '-acodec', 'pcm_u8',
+                '-af', 'volume=%.1fdB,aresample=%d,aresample=async=1000,aresample=osf=u8,asetnsamples=n=210:p=0' % (self.volumeAdjust, self.outputAudioSampleRate),
+                '-y',
+                self.outputFile]
+        else:
+            scaleCommand = self.getScaleCommand(self.outputWidth, self.outputHeight)
+            vidcommand = [ FFMPEG_BIN,
+                '-i', self.inputFile,
+                '-r', '%d' % (self.outputFrameRate),
+                '-pix_fmt', 'yuv420p',
+                '-vf', scaleCommand,
+                '-b:v', bitRate,
+                '-c:v', 'mjpeg',
+                '-ac', '1',
+                '-acodec', 'pcm_u8',
+                '-af', 'volume=%.1fdB,aresample=%d,aresample=async=1000,aresample=osf=u8,asetnsamples=n=210:p=0' % (self.volumeAdjust, self.outputAudioSampleRate),
+                '-y',
+                self.outputFile]
         
         print(vidcommand)
         vidPipe = '';
@@ -701,16 +759,27 @@ class TinyTVConverter(Frame):
         output=open(self.outputFile, 'wb')
         devnull = open(os.devnull, 'wb')
 
-        scaleCommand=self.getScaleCommand(self.outputWidth,self.outputHeight)
-        
-        vidcommand = [ FFMPEG_BIN,
-            '-i', self.inputFile,
-            '-f', 'image2pipe',
-            '-r', '%d' % (self.outputFrameRate),
-            '-vf', scaleCommand,
-            '-vcodec', 'rawvideo',
-            '-pix_fmt', 'bgr565be',
-            '-f', 'rawvideo', '-']
+        if self.blurEdit.get() == 1:
+            filterGraph = self.getBlurFilterComplex(self.outputWidth, self.outputHeight)
+            vidcommand = [ FFMPEG_BIN,
+                '-i', self.inputFile,
+                '-f', 'image2pipe',
+                '-r', '%d' % (self.outputFrameRate),
+                '-filter_complex', filterGraph,
+                '-map', '[vout]',
+                '-vcodec', 'rawvideo',
+                '-pix_fmt', 'bgr565be',
+                '-f', 'rawvideo', '-']
+        else:
+            scaleCommand = self.getScaleCommand(self.outputWidth, self.outputHeight)
+            vidcommand = [ FFMPEG_BIN,
+                '-i', self.inputFile,
+                '-f', 'image2pipe',
+                '-r', '%d' % (self.outputFrameRate),
+                '-vf', scaleCommand,
+                '-vcodec', 'rawvideo',
+                '-pix_fmt', 'bgr565be',
+                '-f', 'rawvideo', '-']
         
         vidPipe = '';
         if os.name=='nt' :
@@ -818,11 +887,12 @@ class TinyTVConverter(Frame):
             return
         
         # Ask user for confirmation
-        result = messagebox.askyesno('TinyTV Converter', 
+        result = messagebox.askyesno('TinyTV Converter',
                                    f'Found {len(video_files)} video file(s) in the folder.\n\n'
                                    f'Convert all files using current settings?\n\n'
                                    f'Output format: {"TSV" if self.outputFormat.get() == 2 else "AVI"}\n'
-                                   f'TV Type: {"TinyTV 2" if self.TVTypeOption.get() == 3 else "TinyTV Mini" if self.TVTypeOption.get() == 2 else "TinyTV DIY Kit"}')
+                                   f'TV Type: {"TinyTV 2" if self.TVTypeOption.get() == 3 else "TinyTV Mini" if self.TVTypeOption.get() == 2 else "TinyTV DIY Kit"}\n'
+                                   f'Blur Edit: {"On" if self.blurEdit.get() == 1 else "Off"}')
         
         if not result:
             return

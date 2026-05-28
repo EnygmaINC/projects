@@ -52,6 +52,7 @@ A Python-based modification of TinyCircuits' own .exe application for converting
      - **Contain/Letterbox**: Keep aspect ratio, add padding
      - **Cover/Zoom**: Keep aspect ratio, crop to fit
      - **Fill/Stretch**: Stretch video to fit exactly
+     - **Blur Edit**: Fill empty bars with a blurred, zoomed copy of the video (great for vertical/portrait clips on TinyTV 2)
    
    - **Audio Options**:
      - **Keep Audio Volume**: Maintain original volume
@@ -108,6 +109,7 @@ A Python-based modification of TinyCircuits' own .exe application for converting
 ### Video Options Menu
 - **TV Type**: TinyTV 2, Mini, or DIY Kit
 - **Scaling**: Contain/Letterbox, Cover/Zoom, Fill/Stretch
+- **Blur Edit** *(checkbox)*: Blurred background fill for vertical videos
 
 ### Audio Options Menu
 - **Keep Audio Volume**: Maintain original levels
@@ -130,6 +132,7 @@ A Python-based modification of TinyCircuits' own .exe application for converting
    - Use "Contain/Letterbox" scaling for most videos
    - Choose AVI format unless you specifically need TSV
    - Enable audio normalization for quiet videos
+   - Enable **Blur Edit** for vertical (portrait) videos on TinyTV 2 — it fills the letterbox bars with a blurred, zoomed version of the same video instead of black bars
 
 2. **Batch Processing**:
    - Organize videos in folders by type or project
