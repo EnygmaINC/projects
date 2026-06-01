@@ -7,25 +7,29 @@ Real-time mmWave radar visualizer for the **M5Stack Tab5** using the **HLK-LD245
 | Component | Notes |
 |-----------|-------|
 | M5Stack Tab5 | ESP32-P4 · 1280×720 MIPI-DSI · 32 MB PSRAM |
-| HLK-LD2450 | 24 GHz mmWave radar, up to 3 targets, ~10 Hz output |
+| HLK-LD2450 | 24 GHz mmWave radar, up to 3 moving targets, ~10 Hz output |
+| HLK-LD2410B _(optional)_ | 24 GHz mmWave radar, single-target static presence detection |
 
 ### Wiring (GPIO_EXT header, bottom edge of Tab5)
 
-| Tab5 pin | LD2450 pin |
-|----------|------------|
-| EXT 5V   | 5V         |
-| GND      | GND        |
-| G49      | TX         |
-| G50      | RX         |
+| Tab5 pin | LD2450 | LD2410B |
+|----------|--------|---------|
+| EXT 5V   | VCC    | VCC     |
+| GND      | GND    | GND     |
+| G49      | TX     |         |
+| G50      | RX     |         |
+| G51      |        | TX      |
+| G52      |        | RX      |
 
-No level-shifter required — the LD2450 UART is 3.3 V even on a 5 V supply.
+No level-shifter required — both sensors use 3.3 V UART logic even on a 5 V supply.
 
 ## Features
 
 - Full 180° radar sweep with range rings at 2 m / 4 m / 6 m (displayed in imperial: ft / in)
 - Expanding sonar-pulse animation with brightness fade
-- Up to 3 colour-coded target dots with white glow and sweep-driven brightness
-- Two-row status bar — range setting + target count (row 1), per-target position readout (row 2)
+- Up to 3 colour-coded target dots (LD2450) with white glow and sweep-driven brightness
+- **LD2410B static presence rings** — amber semicircle when a person stops moving (LD2450 blind spot), yellow when moving; distance shown in status bar
+- Two-row status bar — range / target count / LD2410B state (row 1), per-target position readout (row 2)
 - Battery indicator with live charging bolt, updated every second
 - Settings menu:
   - IMU auto-rotate (uses Tab5 accelerometer)
@@ -68,6 +72,7 @@ arduino-cli compile \
 
 | Version | Notes |
 |---------|-------|
+| v3.6 | LD2410B dual-sensor support — static presence rings (amber/yellow), status bar LD2410B readout |
 | v3.5 | Touch fix (`wasPressed`), degree symbol (UTF-8), 2×2 orientation grid, Standard/Direct orientation labels |
 | v3.4 | Imperial units, full-height battery + menu button, white pulse, dotted sector lines, bold arc labels |
 
