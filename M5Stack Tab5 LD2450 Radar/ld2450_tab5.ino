@@ -16,22 +16,51 @@
 #include <math.h>
 
 // ════════════════════════════════════════════════════════════════════════════
-//  UART
+//  UART  — LD2450 on Serial1 (G49/G50), LD2410B on Serial2 (G51/G52)
 // ════════════════════════════════════════════════════════════════════════════
-#define LD_RX_PIN  49
-#define LD_TX_PIN  50
-#define LD_BAUD    256000
+#define LD_RX_PIN    49
+#define LD_TX_PIN    50
+#define LD_BAUD      256000
 static HardwareSerial radarSer(1);
 
+#define LD2410_RX_PIN  51    // G51 ← LD2410B TX
+#define LD2410_TX_PIN  52    // G52 → LD2410B RX
+#define LD2410_BAUD    256000
+static HardwareSerial radarSer2(2);
+
 // ════════════════════════════════════════════════════════════════════════════
-//  PROTOCOL
+//  PROTOCOL — LD2450 (multi-target X/Y) & LD2410B (single-target distance)
 // ════════════════════════════════════════════════════════════════════════════
+// ── LD2450 ─────────────────────────────────────────────────────────────────
 #define MAX_TGTS   3
 #define FRAME_LEN  30
 static const uint8_t FHDR[4] = {0xAA, 0xFF, 0x03, 0x00};
 static const uint8_t FFTR[2] = {0x55, 0xCC};
 static const int32_t RANGES[3] = {2000, 4000, 6000};
 #define RANGE_CNT  3
+
+// ── LD2410B ─────────────────────────────────────────────────────────────────
+// Standard data frame: FD FC FB FA | 0D 00 | 02 AA [9 data bytes] 55 00 | 04 03 02 01
+// Total 23 bytes.  Type=0x02, head=0xAA in positions [6][7].
+#define LD2410_FRAME_LEN  23
+static const uint8_t LD2410_FHDR[4] = {0xFD, 0xFC, 0xFB, 0xFA};
+static const uint8_t LD2410_FFTR[4] = {0x04, 0x03, 0x02, 0x01};
+
+enum LD2410State : uint8_t {
+    LD_NO_TARGET  = 0,
+    LD_MOVING     = 1,
+    LD_STATIONARY = 2,
+    LD_BOTH       = 3
+};
+struct LD2410Data {
+    LD2410State state;
+    uint16_t movDist_cm;    // moving target distance
+    uint8_t  movEnergy;     // 0–100
+    uint16_t statDist_cm;   // stationary target distance
+    uint8_t  statEnergy;    // 0–100
+    uint16_t detDist_cm;    // combined detection distance
+    bool     present;
+};
 
 // ════════════════════════════════════════════════════════════════════════════
 //  SCREEN LAYOUT  (landscape 1280 × 720)
@@ -128,10 +157,21 @@ static float smoothY[MAX_TGTS]     = {};
 static float sweepBright[MAX_TGTS] = {};
 static bool  hadPresent[MAX_TGTS]  = {};
 
+// ── LD2450 parser state ──────────────────────────────────────────────────────
 static uint8_t  fb[FRAME_LEN];
 static uint8_t  hm  = 0;
 static uint16_t fp  = 0;
 static bool     inf = false;
+
+// ── LD2410B data + parser state ──────────────────────────────────────────────
+static LD2410Data   ld2410       = {};
+static portMUX_TYPE ld2410_mux   = portMUX_INITIALIZER_UNLOCKED;
+static uint32_t     lastLD2410Ms = 0;
+
+static uint8_t  ld2410_fb[LD2410_FRAME_LEN];
+static uint8_t  ld2410_hm  = 0;
+static uint16_t ld2410_fp  = 0;
+static bool     ld2410_inf = false;
 
 static uint8_t      rangeIdx     = RANGE_CNT - 1;
 static SensorOrient sensorOrient = OR_MIRROR;  // flip-X matches user's physical mounting
@@ -257,6 +297,56 @@ static void processByte(uint8_t b) {
     } else {
         fb[fp++]=b;
         if(fp==FRAME_LEN){ if(fb[28]==FFTR[0]&&fb[29]==FFTR[1])commitFrame(); inf=false;fp=0; }
+    }
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  LD2410B FRAME PARSER
+//  Frame layout (23 bytes):
+//  [0..3]  FD FC FB FA  header
+//  [4..5]  0D 00        data length = 13
+//  [6]     02           reporting frame type
+//  [7]     AA           head marker
+//  [8]     state        00=none 01=moving 02=static 03=both
+//  [9..10] mov dist cm  (LE)
+//  [11]    mov energy   0–100
+//  [12..13] stat dist cm (LE)
+//  [14]    stat energy  0–100
+//  [15..16] det dist cm  (LE)
+//  [17]    55           tail marker
+//  [18]    00           checksum (fixed)
+//  [19..22] 04 03 02 01  footer
+// ════════════════════════════════════════════════════════════════════════════
+static void commitLD2410Frame() {
+    LD2410Data tmp;
+    tmp.state       = (LD2410State)ld2410_fb[8];
+    tmp.movDist_cm  = (uint16_t)(ld2410_fb[ 9] | ((uint16_t)ld2410_fb[10] << 8));
+    tmp.movEnergy   = ld2410_fb[11];
+    tmp.statDist_cm = (uint16_t)(ld2410_fb[12] | ((uint16_t)ld2410_fb[13] << 8));
+    tmp.statEnergy  = ld2410_fb[14];
+    tmp.detDist_cm  = (uint16_t)(ld2410_fb[15] | ((uint16_t)ld2410_fb[16] << 8));
+    tmp.present     = (tmp.state != LD_NO_TARGET && tmp.detDist_cm > 0);
+    portENTER_CRITICAL(&ld2410_mux);
+    ld2410 = tmp; lastLD2410Ms = millis();
+    portEXIT_CRITICAL(&ld2410_mux);
+}
+static void processLD2410Byte(uint8_t b) {
+    if (!ld2410_inf) {
+        if (b==LD2410_FHDR[ld2410_hm]) {
+            ld2410_fb[ld2410_hm++]=b;
+            if (ld2410_hm==4) { ld2410_inf=true; ld2410_fp=4; ld2410_hm=0; }
+        } else { ld2410_hm=(b==LD2410_FHDR[0])?1:0; if(ld2410_hm==1)ld2410_fb[0]=b; }
+    } else {
+        ld2410_fb[ld2410_fp++]=b;
+        if (ld2410_fp==LD2410_FRAME_LEN) {
+            // Verify footer, type byte, and head marker
+            if (ld2410_fb[19]==LD2410_FFTR[0] && ld2410_fb[20]==LD2410_FFTR[1] &&
+                ld2410_fb[21]==LD2410_FFTR[2] && ld2410_fb[22]==LD2410_FFTR[3] &&
+                ld2410_fb[ 6]==0x02            && ld2410_fb[ 7]==0xAA) {
+                commitLD2410Frame();
+            }
+            ld2410_inf=false; ld2410_fp=0;
+        }
     }
 }
 
@@ -543,17 +633,59 @@ static void drawBattery() {
 //  Row 1 (y≈30): Range setting | Signal / target count
 //  Row 2 (y≈76): One block per detected target: distance + LEFT/RIGHT offset
 // ════════════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════════════
+//  DRAW — LD2410B PRESENCE RINGS
+//  Drawn over the radar arcs:
+//   • Amber  semicircle = stationary target at that distance
+//   • Yellow semicircle = moving target at that distance
+//  Full drawCircle; below-horizon strip erased later in drawFrame().
+// ════════════════════════════════════════════════════════════════════════════
+static void drawLD2410Presence() {
+    bool stale = (lastLD2410Ms == 0) || (millis() - lastLD2410Ms > 2000);
+    if (stale) return;
+
+    LD2410Data snap;
+    portENTER_CRITICAL(&ld2410_mux);
+    snap = ld2410;
+    portEXIT_CRITICAL(&ld2410_mux);
+
+    if (!snap.present) return;
+
+    int32_t maxRange = RANGES[rangeIdx];
+
+    // Stationary ring — amber, 5 px thick
+    if ((snap.state == LD_STATIONARY || snap.state == LD_BOTH) && snap.statDist_cm > 0) {
+        int32_t r = (int32_t)(snap.statDist_cm) * 10 * RDR_R / maxRange;
+        if (r > 4 && r <= RDR_R + 10) {
+            for (int t = -2; t <= 2; t++)
+                cv.drawCircle(RDR_CX, RDR_CY, r + t, 0xFF8800);
+            // Bright core
+            cv.drawCircle(RDR_CX, RDR_CY, r, 0xFFAA00);
+        }
+    }
+
+    // Moving ring — yellow, 3 px thick (LD2450 already shows moving dots;
+    // this ring confirms overall distance when dots are off-angle)
+    if ((snap.state == LD_MOVING || snap.state == LD_BOTH) && snap.movDist_cm > 0) {
+        int32_t r = (int32_t)(snap.movDist_cm) * 10 * RDR_R / maxRange;
+        if (r > 4 && r <= RDR_R + 10) {
+            for (int t = -1; t <= 1; t++)
+                cv.drawCircle(RDR_CX, RDR_CY, r + t, 0xFFEE00);
+        }
+    }
+}
+
 static void drawStatusBar() {
     cv.fillRect(0, 0, SCR_W, SB_H, CP_SB_BG);
     // Bottom border
     cv.drawLine(0, SB_H-3, SCR_W, SB_H-3, CP_MENU_BDR);
     cv.drawLine(0, SB_H-1, SCR_W, SB_H-1, 0x1A5A3A);
 
-    // Version stamp — confirms the correct binary is running
+    // Version stamp
     cv.setFont(&fonts::FreeSans9pt7b);
     cv.setTextDatum(TR_DATUM);
     cv.setTextColor(0x44AA44);
-    cv.drawString("v3.4", BATT_X - 8, SB_H - 6);
+    cv.drawString("v3.6", BATT_X - 8, SB_H - 6);
     cv.setTextDatum(TL_DATUM);
 
     bool noSig = (lastFrameMs==0) || (millis()-lastFrameMs > 2000);
@@ -564,7 +696,7 @@ static void drawStatusBar() {
     const int ROW1 = SB_H / 4;       // ≈ 27 px from top
     const int ROW2 = SB_H * 3 / 4;   // ≈ 81 px from top
 
-    // ── Row 1: RANGE + TARGET COUNT — purple labels ──────────────────────────
+    // ── Row 1: RANGE + TARGET COUNT + LD2410B status ─────────────────────────
     float maxFt = maxR * MM_TO_FT;
     char rng[24];
     if (maxFt < 10.0f) snprintf(rng, sizeof(rng), "RANGE %.1fft", maxFt);
@@ -588,6 +720,28 @@ static void drawStatusBar() {
         snprintf(tcnt, sizeof(tcnt), cnt==1 ? "1 TARGET" : "%d TARGETS", cnt);
         cv.setTextColor(CP_SB_TITLE);
         cv.drawString(tcnt, 340, ROW1);
+
+        // ── LD2410B indicator (right of target count, before battery) ─────────
+        bool ld_stale = (lastLD2410Ms == 0) || (millis() - lastLD2410Ms > 2000);
+        if (!ld_stale) {
+            LD2410Data snap2;
+            portENTER_CRITICAL(&ld2410_mux);
+            snap2 = ld2410;
+            portEXIT_CRITICAL(&ld2410_mux);
+
+            if (snap2.present) {
+                char ldbuf[24];
+                float detFt = snap2.detDist_cm * 0.0328084f;  // cm → ft
+                if (snap2.state == LD_STATIONARY || snap2.state == LD_BOTH) {
+                    snprintf(ldbuf, sizeof(ldbuf), "STATIC %.1fft", detFt);
+                    cv.setTextColor(0xFF8800);   // amber
+                } else {
+                    snprintf(ldbuf, sizeof(ldbuf), "MOVING %.1fft", detFt);
+                    cv.setTextColor(0xFFEE00);   // yellow
+                }
+                cv.drawString(ldbuf, 580, ROW1);
+            }
+        }
 
         // ── Row 2: per-target readout — white text, imperial ─────────────────
         // Format: "T1  6.2ft  14in LEFT"  or  "T1  6.2ft  CTR"
@@ -941,6 +1095,7 @@ static void handleTouch() {
 static void drawFrame() {
     cv.fillScreen(CP_BG);
     drawRadarBackground();   // fillCircle + drawCircle rings (full 360°)
+    drawLD2410Presence();    // LD2410B amber/yellow distance rings (full 360°)
     drawPulse();             // drawCircle pulse (full 360°)
     drawTargets();
 
@@ -979,9 +1134,13 @@ void setup() {
         while(true) delay(1000);
     }
     radarSer.setRxBufferSize(1024);
-    radarSer.begin(LD_BAUD,SERIAL_8N1,LD_RX_PIN,LD_TX_PIN);
+    radarSer.begin(LD_BAUD, SERIAL_8N1, LD_RX_PIN, LD_TX_PIN);
+
+    radarSer2.setRxBufferSize(512);
+    radarSer2.begin(LD2410_BAUD, SERIAL_8N1, LD2410_RX_PIN, LD2410_TX_PIN);
+
     Serial.begin(115200);
-    Serial.println("LD2450 Tab5 Radar v3 — ready");
+    Serial.println("LD2450 + LD2410B Tab5 Radar v3.6 — ready");
 }
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -989,7 +1148,8 @@ void setup() {
 // ════════════════════════════════════════════════════════════════════════════
 void loop() {
     M5.update();
-    while (radarSer.available()) processByte((uint8_t)radarSer.read());
+    while (radarSer.available())  processByte((uint8_t)radarSer.read());
+    while (radarSer2.available()) processLD2410Byte((uint8_t)radarSer2.read());
 
     uint32_t now=millis();
     updatePulse(now);
