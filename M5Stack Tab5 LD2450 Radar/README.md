@@ -2,6 +2,8 @@
 
 Real-time mmWave radar visualizer for the **M5Stack Tab5** using the **HLK-LD2450** 24 GHz presence sensor. Tracks up to three simultaneous targets, displays distance and position on a full-screen radar sweep, and provides an in-app settings menu.
 
+![UI preview — v3.6](ui-preview.svg)
+
 ## Hardware
 
 | Component | Notes |

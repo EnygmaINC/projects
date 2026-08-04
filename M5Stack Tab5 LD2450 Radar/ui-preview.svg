@@ -1,0 +1,63 @@
+<svg width="680" height="383" xmlns="http://www.w3.org/2000/svg">
+  <defs><clipPath id="rc"><rect x="0" y="0" width="680" height="380"/></clipPath></defs>
+  <rect width="680" height="383" fill="#000"/>
+  <circle cx="340" cy="380" r="319" fill="#050F07" clip-path="url(#rc)"/>
+  <circle cx="340" cy="380" r="106" fill="none" stroke="#0D3B22" stroke-width="2" clip-path="url(#rc)"/>
+  <circle cx="340" cy="380" r="213" fill="none" stroke="#1A6644" stroke-width="2" clip-path="url(#rc)"/>
+  <circle cx="340" cy="380" r="319" fill="none" stroke="#00FF88" stroke-width="2.5" clip-path="url(#rc)"/>
+  <line x1="340" y1="380" x2="21" y2="380" stroke="#1A4A2A" stroke-width="2" stroke-dasharray="6,5"/>
+  <line x1="340" y1="380" x2="63" y2="220" stroke="#1A4A2A" stroke-width="2" stroke-dasharray="6,5"/>
+  <line x1="340" y1="380" x2="180" y2="104" stroke="#1A4A2A" stroke-width="2" stroke-dasharray="6,5"/>
+  <line x1="340" y1="380" x2="340" y2="61" stroke="#1A8855" stroke-width="2.5" stroke-dasharray="9,5"/>
+  <line x1="340" y1="380" x2="500" y2="104" stroke="#1A4A2A" stroke-width="2" stroke-dasharray="6,5"/>
+  <line x1="340" y1="380" x2="616" y2="220" stroke="#1A4A2A" stroke-width="2" stroke-dasharray="6,5"/>
+  <line x1="340" y1="380" x2="659" y2="380" stroke="#1A4A2A" stroke-width="2" stroke-dasharray="6,5"/>
+  <line x1="14" y1="380" x2="666" y2="380" stroke="#1A8855" stroke-width="1.5"/>
+  <text x="416" y="303" fill="#22AA88" font-size="12" font-weight="bold" font-family="sans-serif">20ft</text>
+  <text x="491" y="225" fill="#22AA88" font-size="12" font-weight="bold" font-family="sans-serif">40ft</text>
+  <text x="564" y="147" fill="#00FFCC" font-size="12" font-weight="bold" font-family="sans-serif">60ft</text>
+  <text x="668" y="377" fill="white" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="start">0&#176;</text>
+  <text x="623" y="213" fill="white" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">30&#176;</text>
+  <text x="507" y="96" fill="white" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">60&#176;</text>
+  <text x="340" y="73" fill="white" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">90&#176;</text>
+  <text x="173" y="96" fill="white" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">120&#176;</text>
+  <text x="57" y="213" fill="white" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">150&#176;</text>
+  <text x="12" y="377" fill="white" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="end">180&#176;</text>
+  <circle cx="340" cy="380" r="161" fill="none" stroke="#FF8800" stroke-width="1.5" clip-path="url(#rc)" opacity="0.4"/>
+  <circle cx="340" cy="380" r="159" fill="none" stroke="#FFAA00" stroke-width="4" clip-path="url(#rc)" opacity="0.7"/>
+  <circle cx="340" cy="380" r="157" fill="none" stroke="#FF8800" stroke-width="1.5" clip-path="url(#rc)" opacity="0.35"/>
+  <circle cx="340" cy="380" r="191" fill="none" stroke="white" stroke-width="1" clip-path="url(#rc)" opacity="0.1"/>
+  <circle cx="340" cy="380" r="188" fill="none" stroke="white" stroke-width="2" clip-path="url(#rc)" opacity="0.2"/>
+  <circle cx="340" cy="380" r="185" fill="none" stroke="white" stroke-width="1" clip-path="url(#rc)" opacity="0.1"/>
+  <circle cx="228" cy="268" r="15" fill="none" stroke="white" stroke-width="1" opacity="0.1"/>
+  <circle cx="228" cy="268" r="11" fill="none" stroke="white" stroke-width="1.5" opacity="0.28"/>
+  <circle cx="228" cy="268" r="7" fill="none" stroke="white" stroke-width="2" opacity="0.48"/>
+  <circle cx="228" cy="268" r="5" fill="#00FFCC"/>
+  <text x="228" y="257" fill="white" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">T1</text>
+  <circle cx="388" cy="252" r="15" fill="none" stroke="white" stroke-width="1" opacity="0.1"/>
+  <circle cx="388" cy="252" r="11" fill="none" stroke="white" stroke-width="1.5" opacity="0.28"/>
+  <circle cx="388" cy="252" r="7" fill="none" stroke="white" stroke-width="2" opacity="0.48"/>
+  <circle cx="388" cy="252" r="5" fill="#FFAA00"/>
+  <text x="388" y="241" fill="white" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">T2</text>
+  <circle cx="340" cy="380" r="5" fill="white"/>
+  <circle cx="340" cy="380" r="3" fill="#00FFCC"/>
+  <rect width="680" height="57" fill="#011C01"/>
+  <line x1="0" y1="57" x2="680" y2="57" stroke="#0D4020" stroke-width="1"/>
+  <text x="10" y="21" fill="#8000FF" font-size="11" font-weight="bold" font-family="sans-serif">RANGE</text>
+  <text x="10" y="40" fill="white" font-size="15" font-weight="bold" font-family="sans-serif">20ft</text>
+  <text x="80" y="21" fill="#8000FF" font-size="11" font-weight="bold" font-family="sans-serif">TARGETS</text>
+  <text x="80" y="40" fill="white" font-size="15" font-weight="bold" font-family="sans-serif">2</text>
+  <text x="165" y="21" fill="#FF8800" font-size="10" font-weight="bold" font-family="sans-serif">LD2410B</text>
+  <text x="165" y="40" fill="#FFAA00" font-size="12" font-weight="bold" font-family="sans-serif">STATIC 9.8ft</text>
+  <text x="10" y="53" fill="#00FFCC" font-size="9" font-family="sans-serif">T1: -4.3ft | 9.8ft     T2:  1.8ft | 8.2ft</text>
+  <rect x="520" y="2" width="92" height="53" rx="4" fill="none" stroke="#22AA88" stroke-width="1.5"/>
+  <rect x="612" y="17" width="7" height="23" rx="2" fill="#22AA88"/>
+  <rect x="522" y="4" width="69" height="49" rx="3" fill="#1EDD3C" opacity="0.85"/>
+  <text x="556" y="37" fill="#001500" font-size="15" font-weight="bold" text-anchor="middle" font-family="sans-serif">75%</text>
+  <path d="M603,10 L596,28 L605,28 L598,48" stroke="#FFEE00" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="620" y="2" width="56" height="53" rx="4" fill="#042B03" stroke="#00CCAA" stroke-width="1.5"/>
+  <line x1="633" y1="18" x2="662" y2="18" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="633" y1="28" x2="662" y2="28" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="633" y1="38" x2="662" y2="38" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+  <text x="676" y="381" fill="#44AA44" font-size="8" text-anchor="end" font-family="monospace">v3.6</text>
+</svg>
