@@ -1,4 +1,4 @@
-<svg width="680" height="383" xmlns="http://www.w3.org/2000/svg">
+<svg width="1280" height="721" viewBox="0 0 680 383" xmlns="http://www.w3.org/2000/svg">
   <defs><clipPath id="rc"><rect x="0" y="0" width="680" height="380"/></clipPath></defs>
   <rect width="680" height="383" fill="#000"/>
   <circle cx="340" cy="380" r="319" fill="#050F07" clip-path="url(#rc)"/>
